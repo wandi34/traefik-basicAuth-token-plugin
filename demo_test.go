@@ -1,4 +1,4 @@
-package plugindemo_test
+package basicAuthToHeader_test
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 )
 
 func TestDemo(t *testing.T) {
-	cfg := plugindemo.CreateConfig()
+	cfg := basicAuthToHeader.CreateConfig()
 	cfg.Headers["X-Host"] = "[[.Host]]"
 	cfg.Headers["X-Method"] = "[[.Method]]"
 	cfg.Headers["X-URL"] = "[[.URL]]"
@@ -20,7 +20,7 @@ func TestDemo(t *testing.T) {
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
 
-	handler, err := plugindemo.New(ctx, next, cfg, "demo-plugin")
+	handler, err := basicAuthToHeader.New(ctx, next, cfg, "demo-plugin")
 	if err != nil {
 		t.Fatal(err)
 	}
