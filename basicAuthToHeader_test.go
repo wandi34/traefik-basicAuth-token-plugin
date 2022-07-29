@@ -1,26 +1,29 @@
-package basicAuthToHeader_test
+package basicauthtoheader_test
 
 import (
 	"context"
+	"encoding/base64"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/traefik/plugindemo"
+	basicauthtoheader "github.com/wandi34/traefik-basicAuth-token-plugin"
 )
 
-func TestDemo(t *testing.T) {
-	cfg := basicAuthToHeader.CreateConfig()
+func TestBasicAuthToHeader(t *testing.T) {
+	user := "admin"
+	pw := "secret"
+	cred := user + ":" + pw
+	cfg := basicauthtoheader.CreateConfig()
 	cfg.Headers["X-Host"] = "[[.Host]]"
 	cfg.Headers["X-Method"] = "[[.Method]]"
 	cfg.Headers["X-URL"] = "[[.URL]]"
-	cfg.Headers["X-URL"] = "[[.URL]]"
-	cfg.Headers["X-Demo"] = "test"
+	cfg.Headers["Authorization"] = "Basic " + base64.StdEncoding.EncodeToString([]byte(cred))
 
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
 
-	handler, err := basicAuthToHeader.New(ctx, next, cfg, "demo-plugin")
+	handler, err := basicauthtoheader.New(ctx, next, cfg, "demo-plugin")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,10 +37,7 @@ func TestDemo(t *testing.T) {
 
 	handler.ServeHTTP(recorder, req)
 
-	assertHeader(t, req, "X-Host", "localhost")
-	assertHeader(t, req, "X-URL", "http://localhost")
-	assertHeader(t, req, "X-Method", "GET")
-	assertHeader(t, req, "X-Demo", "test")
+	assertHeader(t, req, "DEPLOY-TOKEN", pw)
 }
 
 func assertHeader(t *testing.T, req *http.Request, key, expected string) {

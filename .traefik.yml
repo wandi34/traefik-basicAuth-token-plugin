@@ -1,10 +1,10 @@
-displayName: Demo Plugin
+displayName: BasicAuth to header plugin
 type: middleware
 iconPath: .assets/icon.png
 
-import: github.com/traefik/plugindemo
+import: github.com/wandi34/traefik-basicAuth-token-plugin
 
-summary: '[Demo] Add Request Header'
+summary: 'Adds basicAuth password field as custom header'
 
 testData:
   Headers:
